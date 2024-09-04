@@ -1,0 +1,236 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+
+public class SupermercadoBD extends JFrame {
+    private JTextField codigoField, nombreField, fechaField, cantidadField;
+    private JTextArea displayArea;
+
+    public SupermercadoBD() {
+        setTitle("Gestión de Productos y Cajas de Inventario");
+        setSize(800, 600); // Ajusta el tamaño inicial si es necesario
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new FlowLayout());
+
+        codigoField = new JTextField(10);
+        nombreField = new JTextField(25);
+        fechaField = new JTextField(10);
+        cantidadField = new JTextField(5);
+        displayArea = new JTextArea(20, 60);
+        displayArea.setEditable(false);
+
+        add(new JLabel("Código Producto:"));
+        add(codigoField);
+        add(new JLabel("Nombre Producto:"));
+        add(nombreField);
+        add(new JLabel("Fecha Vencimiento:"));
+        add(fechaField);
+        add(new JLabel("Cantidad:"));
+        add(cantidadField);
+
+        JButton addButton = new JButton("Agregar");
+        JButton viewButton = new JButton("Ver Productos");
+        JButton viewCajaButton = new JButton("Ver Cajas de Inventario");
+        JButton updateButton = new JButton("Actualizar");
+        JButton deleteButton = new JButton("Eliminar");
+        JButton exitButton = new JButton("Salir");
+
+        add(addButton);
+        add(viewButton);
+        add(viewCajaButton);
+        add(updateButton);
+        add(deleteButton);
+        add(exitButton);
+        add(new JScrollPane(displayArea));
+
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addProduct();
+            }
+        });
+
+        viewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewProducts();
+            }
+        });
+
+        viewCajaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewCajas();
+            }
+        });
+
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateProduct();
+            }
+        });
+
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteProduct();
+            }
+        });
+
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                closeApp();
+            }
+        });
+    }
+
+    private void addProduct() {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String sql = "INSERT INTO Productos (codigo_producto, nombre_producto, fecha_vencimiento, cantidad) VALUES (?, ?, ?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, codigoField.getText());
+            stmt.setString(2, nombreField.getText());
+            stmt.setString(3, fechaField.getText());
+            stmt.setInt(4, Integer.parseInt(cantidadField.getText()));
+            stmt.executeUpdate();
+            displayArea.setText("Producto agregado.\n");
+        } catch (SQLException ex) {
+            displayArea.setText("Error al agregar producto: " + ex.getMessage() + "\n");
+        }
+    }
+
+    private void viewProducts() {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            if (connection != null) {
+                String sql = "SELECT * FROM Productos";
+                try (PreparedStatement stmt = connection.prepareStatement(sql);
+                     ResultSet rs = stmt.executeQuery()) {
+                    StringBuilder sb = new StringBuilder();
+                    while (rs.next()) {
+                        sb.append("Código: ").append(rs.getString("codigo_producto"))
+                                .append(", Nombre: ").append(rs.getString("nombre_producto"))
+                                .append(", Vencimiento: ").append(rs.getString("fecha_vencimiento"))
+                                .append(", Cantidad: ").append(rs.getInt("cantidad")).append("\n");
+                    }
+                    displayArea.setText(sb.toString());
+                }
+            } else {
+                displayArea.setText("No se pudo establecer la conexión con la base de datos.\n");
+            }
+        } catch (SQLException ex) {
+            displayArea.setText("Error al obtener productos: " + ex.getMessage() + "\n");
+            ex.printStackTrace();
+        }
+    }
+
+    private void viewCajas() {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            if (connection != null) {
+                String sql = "SELECT * FROM caja_inventario";
+                try (PreparedStatement stmt = connection.prepareStatement(sql);
+                     ResultSet rs = stmt.executeQuery()) {
+                    StringBuilder sb = new StringBuilder();
+                    while (rs.next()) {
+                        sb.append("Número de Factura: ").append(rs.getInt("num_factura"))
+                                .append(", Método de Pago: ").append(rs.getString("Metodo_Pago"))
+                                .append(", ID Tarjeta: ").append(rs.getString("id_tarjeta"))
+                                .append(", Trabajador Caja: ").append(rs.getString("trabajador_caja"))
+                                .append(", Caja Clientes: ").append(rs.getString("Caja_Clientes"))
+                                .append(", Caja Productos: ").append(rs.getString("Caja_productos")).append("\n");
+                    }
+                    displayArea.setText(sb.toString());
+                }
+            } else {
+                displayArea.setText("No se pudo establecer la conexión con la base de datos.\n");
+            }
+        } catch (SQLException ex) {
+            displayArea.setText("Error al obtener cajas de inventario: " + ex.getMessage() + "\n");
+            ex.printStackTrace();
+        }
+    }
+
+    private void updateProduct() {
+        // Implementación similar a la función updateProduct() actual
+    }
+
+    private void deleteProduct() {
+        // Implementación similar a la función deleteProduct() actual
+    }
+
+    private void closeApp() {
+        // Cierra la conexión a la base de datos si está abierta
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Cierra la ventana
+        dispose();
+
+        // Cierra la terminal en Windows (opcional)
+        try {
+            Runtime.getRuntime().exec("taskkill /F /IM cmd.exe");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Cierra la aplicación
+        System.exit(0);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                SupermercadoBD app = new SupermercadoBD();
+                app.setVisible(true);
+                Connection connection = DatabaseConnection.getConnection();
+                if (connection != null) {
+                    System.out.println("Conexión establecida con éxito.");
+                }
+            }
+        });
+    }
+}
+
+class DatabaseConnection {
+    public static Connection getConnection() {
+        String host = "127.0.0.1";
+        String port = "1521";
+        String service = "xe";
+        String user = "SUPERMERCADO";
+        String password = "Unisimon2024";
+        String jdbcUrl = "jdbc:oracle:thin:@" + host + ":" + port + ":" + service;
+
+        Connection conexion = null;
+        try {
+            // Cargar el driver JDBC de Oracle
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+
+            // Establecer la conexión
+            conexion = DriverManager.getConnection(jdbcUrl, user, password);
+            System.out.println("¡Conexión establecida con éxito!");
+
+        } catch (ClassNotFoundException e) {
+            System.err.println("No se encontró el driver JDBC de Oracle. Inclúyelo en tu ruta de librerías.");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            System.err.println("Error al establecer la conexión con la base de datos: " + e.getMessage());
+            System.exit(1); // Salir del programa con un código de error
+        }
+
+        return conexion;
+    }
+}

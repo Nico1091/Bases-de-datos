@@ -1,0 +1,60 @@
+CONSULTA SQL
+SELECT CLIENTES.NOMBRE,COMPRAS.CANTIDAD FROM COMPRAS JOIN CLIENTES ON COMPRAS.CEDULA_CLIENTE=CLIENTES.CEDULA;
+TABLAS
+CREATE TABLE Productos (
+    codigo_producto VARCHAR2(10),
+    nombre_producto VARCHAR2(25),
+    fecha_vencimiento DATE,
+    CONSTRAINT pk_codigo_producto PRIMARY KEY (codigo_producto)
+);
+
+CREATE TABLE Trabajadores (
+    Cedula VARCHAR2(10),
+    nombre VARCHAR2(30),
+    puesto VARCHAR2(30),   
+    CONSTRAINT pk_id_trabajador PRIMARY KEY (Cedula)
+);
+
+CREATE TABLE Clientes (
+    Cedula VARCHAR2(10),
+    Nombre VARCHAR2(30),
+    Telefono VARCHAR2(10),
+    Direccion VARCHAR2(20),  -- Cambiado a VARCHAR2(20)
+    CONSTRAINT pk_Id_cliente PRIMARY KEY (Cedula)
+);
+
+CREATE TABLE Control_supervision (
+    id_super_trabajadores VARCHAR2(10),
+    CONSTRAINT pk_id_supervisor PRIMARY KEY (id_super_trabajadores),
+    CONSTRAINT fk_super_trabajadores FOREIGN KEY (id_super_trabajadores) REFERENCES Trabajadores(Cedula)
+);
+
+CREATE TABLE Cuenta_datafono (
+    numero_cuenta VARCHAR2(10),
+    clave VARCHAR2(4),
+    CONSTRAINT pk_numero_cuenta PRIMARY KEY (numero_cuenta)
+);
+
+CREATE TABLE caja_inventario (
+    num_factura INTEGER,
+    Metodo_Pago VARCHAR2(10),
+    id_tarjeta VARCHAR2(10),
+    trabajador_caja VARCHAR2(10),
+    cantidad_productos INTEGER,
+    PRIMARY KEY (num_factura),
+    CONSTRAINT fk_id_tarjeta FOREIGN KEY (id_tarjeta) REFERENCES Cuenta_datafono(numero_cuenta),
+    CONSTRAINT fk_trabajador_caja FOREIGN KEY (trabajador_caja) REFERENCES Trabajadores(Cedula)
+);
+
+CREATE TABLE Compras (
+    id_compra VARCHAR(1000),
+    num_factura INTEGER,
+    Cedula_cliente VARCHAR2(10),
+    codigo_producto VARCHAR2(10),
+    cantidad INTEGER,
+    PRIMARY KEY (id_compra),
+    CONSTRAINT fk_num_factura FOREIGN KEY (num_factura) REFERENCES caja_inventario(num_factura),
+    CONSTRAINT fk_Cedula_cliente FOREIGN KEY (Cedula_cliente) REFERENCES Clientes(Cedula),
+    CONSTRAINT fk_codigo_producto FOREIGN KEY (codigo_producto) REFERENCES Productos(codigo_producto)
+);
+
