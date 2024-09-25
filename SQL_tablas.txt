@@ -1,0 +1,32 @@
+create table persona(
+identificacion int,
+Cedula varchar(45),
+nombres varchar(45),
+direccion  varchar(45),
+ciudad varchar(45),
+cod_postal varchar(45),
+telefono varchar(45),
+correo varchar(45),
+primary key(identificacion));
+
+create table factura(
+id bigint,
+id_persona int,
+id_compañia smallint,
+id_termino tinyint,
+fecha date,
+hora time,
+Constraint id_persona_fk foreign key(id_persona) references persona(id),
+Constraint id_compañia_fk foreign key(id_compañia) references compañia(id),
+);
+
+create table compañia(
+id Smallint,
+nit varchar(45),
+nombre varchar(45)
+);
+
+create table factura_producto(
+id_factur bigint,
+id
+)
