@@ -598,6 +598,21 @@
             <mxPoint x="420" y="-410" as="targetPoint" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="a2qL7op2R-KlkBjFkayD-7" value="Identificación" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="185" y="-170" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="a2qL7op2R-KlkBjFkayD-8" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="185" y="-150" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="a2qL7op2R-KlkBjFkayD-9" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="185" y="-130" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="a2qL7op2R-KlkBjFkayD-10" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="185" y="-110" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="a2qL7op2R-KlkBjFkayD-11" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="185" y="-90" width="120" height="20" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
